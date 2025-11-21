@@ -65,11 +65,11 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
   }
 
   // Normalize Data
-  const sortedCompanies = companyData.values.sort((a, b) => b.periodString.localeCompare(a.periodString));
+  const sortedCompanies = (companyData.values || []).sort((a, b) => b.periodString.localeCompare(a.periodString));
   const currentCompany = sortedCompanies[0] || { value: 0, periodString: 'N/A' };
   const prevCompany = sortedCompanies[1] || { value: 0 };
-  
-  const growth = prevCompany.value !== 0 
+
+  const growth = prevCompany.value !== 0
     ? ((currentCompany.value - prevCompany.value) / prevCompany.value) * 100 
     : 0;
 
