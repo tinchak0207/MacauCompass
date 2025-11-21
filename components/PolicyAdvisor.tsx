@@ -57,15 +57,23 @@ const PolicyAdvisor: React.FC = () => {
       setMessages(prev => [...prev, { role: 'model', text: '', isStreaming: true }]);
 
       // Prepare history for API (exclude the current message we are about to send)
-      // Note: 'messages' here refers to the state at the beginning of handleSend, 
+      // Note: 'messages' here refers to the state at the beginning of handleSend,
       // so it naturally excludes the userMessage we just added via setMessages updater.
       // We also filter out any empty messages or previous streaming errors to keep the context clean.
-      const apiHistory = messages
+      // Gemini API requires history to start with a user turn, so skip initial model messages.
+      let filteredMessages = messages
         .filter(m => m.text.trim() !== '' && !m.isStreaming)
         .map(m => ({role: m.role, text: m.text}));
 
+      // Skip any leading model messages to ensure history starts with user
+      while (filteredMessages.length > 0 && filteredMessages[0].role === 'model') {
+        filteredMessages = filteredMessages.slice(1);
+      }
+
+      const apiHistory = filteredMessages;
+
       // Inject data context into the prompt if available
-      const finalPrompt = dataContext 
+      const finalPrompt = dataContext
         ? `[System Context: ${dataContext}] \n\n User Question: ${userMessage.text}`
         : userMessage.text;
 
