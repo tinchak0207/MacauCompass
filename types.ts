@@ -2,7 +2,7 @@ export enum NavView {
   LANDING = 'LANDING',
   DASHBOARD = 'DASHBOARD',
   INDUSTRY = 'INDUSTRY',
-  COSTS = 'COSTS',
+  BUSINESS_SIMULATOR = 'BUSINESS_SIMULATOR',
   TRADEMARKS = 'TRADEMARKS',
   AI_ADVISOR = 'AI_ADVISOR'
 }
@@ -49,4 +49,39 @@ export interface MarketStats {
   newCompaniesGrowth: number;
   trademarkHistory: TrademarkData[];
   lastUpdated: Date;
+}
+
+export interface SimulationParams {
+  district: string;
+  shopSize: number; // in square feet
+  employeeCount: number;
+  renovationBudget: number;
+}
+
+export interface SimulationResult {
+  monthlyRent: number;
+  monthlyPayroll: number;
+  monthlyFixedCosts: number;
+  totalInitialInvestment: number;
+  burnRate: number;
+}
+
+export interface DistrictData {
+  id: string;
+  name: string;
+  nameZh: string;
+  rentPerSqFt: number;
+  avgSalary: number;
+  coordinates: { x: number; y: number };
+}
+
+export interface RiskAssessment {
+  overall: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  factors: {
+    rentBurden: { level: string; description: string };
+    scalability: { level: string; description: string };
+    cashFlow: { level: string; description: string };
+  };
+  recommendations: string[];
+  monthlySurvival: number; // months of runway
 }
