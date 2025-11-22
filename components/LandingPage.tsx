@@ -30,7 +30,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
     <div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="min-h-screen relative overflow-hidden bg-[#050505] text-white selection:bg-emerald-500/30"
+      className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#0a1628] via-[#050c1a] to-[#020408] text-white selection:bg-emerald-500/30"
     >
       {/* Ambient Background Effects */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-emerald-900/20 rounded-full blur-[120px] opacity-40 animate-pulse" />
@@ -136,9 +136,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
             <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6">
               <BarChart3 className="w-6 h-6 text-emerald-400" />
             </div>
-            <h3 className="text-xl font-serif font-bold text-gray-100 mb-3">市場脈搏</h3>
+            <h3 className="text-xl font-serif font-bold text-gray-100 mb-3">商業實地雷達</h3>
             <p className="text-gray-400 leading-relaxed text-sm">
-              實時可視化各行業新公司註冊數據。先於市場一步，精準捕捉旅遊、餐飲與科技行業的下一個風口。
+              不再依賴模擬數據。利用 Google Maps 即時顯示該區真實競爭對手、評分與飽和度分析，幫你精準選址避開紅海。
             </p>
           </GlassCard>
 
@@ -146,9 +146,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
             <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-6">
               <Landmark className="w-6 h-6 text-indigo-400" />
             </div>
-            <h3 className="text-xl font-serif font-bold text-gray-100 mb-3">成本情報</h3>
+            <h3 className="text-xl font-serif font-bold text-gray-100 mb-3">一鍵商業計劃書</h3>
             <p className="text-gray-400 leading-relaxed text-sm">
-              深度對比皇朝區、氹仔與北區的租金指數，並整合最新的中小企銀行貸款利率，助您精算每一筆啟動資金。
+              無需逐欄填表。選擇地區、業態、預算，AI 即時生成專業計劃書（含 SWOT、財務預測、合規清單），可直接下載提交銀行或合夥人。
             </p>
           </GlassCard>
 
@@ -156,9 +156,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
             <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-6">
               <Lightbulb className="w-6 h-6 text-amber-400" />
             </div>
-            <h3 className="text-xl font-serif font-bold text-gray-100 mb-3">AI 政策顧問</h3>
+            <h3 className="text-xl font-serif font-bold text-gray-100 mb-3">董事會會議室</h3>
             <p className="text-gray-400 leading-relaxed text-sm">
-              由 Gemini 2.5 驅動。用自然語言查詢澳門《商法典》、稅務優惠與牌照申請流程，提供24/7 專業解答。
+              升級版 AI 顧問。未來支援全雙工語音對話與視覺輸入，像與資深合夥人對談一樣，實時解答租金、動線、牌照等問題。
             </p>
           </GlassCard>
         </motion.div>

@@ -63,12 +63,12 @@ const GlassCard: React.FC<GlassCardProps> = ({
       transition={{ duration: 0.5 }}
       className={`
         relative overflow-hidden
-        bg-white/5 backdrop-blur-xl
+        bg-[#0b172d]/80 backdrop-blur-lg
         border border-white/10
-        rounded-2xl
-        shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]
-        transition-colors duration-300
-        ${hoverEffect ? 'hover:bg-white/10 hover:border-white/20 cursor-pointer' : ''}
+        rounded-3xl
+        shadow-[0_20px_50px_rgba(3,7,18,0.55)]
+        transition-all duration-300
+        ${hoverEffect ? 'hover:bg-[#122447]/80 hover:border-white/20 cursor-pointer' : ''}
         ${className}
       `}
     >

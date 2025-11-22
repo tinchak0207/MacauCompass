@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   TrendingUp, 
-  Calculator, 
+  MapPin,
   FileText, 
   Bot, 
+  FileSignature,
   Menu,
   X,
   LogOut,
@@ -30,15 +31,16 @@ const ConsoleLayout: React.FC<ConsoleLayoutProps> = ({
   const navItems = [
     { id: NavView.DASHBOARD, label: '商業戰情室', icon: LayoutDashboard },
     { id: NavView.INDUSTRY, label: '行業熱力圖', icon: TrendingUp },
-    { id: NavView.BUSINESS_SIMULATOR, label: '生意模擬器', icon: Calculator },
+    { id: NavView.COMMERCIAL_RADAR, label: '商業實地雷達', icon: MapPin },
     { id: NavView.TRADEMARKS, label: '商標趨勢', icon: FileText },
-    { id: NavView.AI_ADVISOR, label: 'AI 政策顧問', icon: Bot },
+    { id: NavView.BOARDROOM, label: '董事會會議室', icon: Bot },
+    { id: NavView.BUSINESS_PLAN, label: '一鍵商業計劃', icon: FileSignature },
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505]">
+    <div className="flex h-screen overflow-hidden bg-[#030b1a] text-gray-100">
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex w-64 flex-col bg-black/40 border-r border-white/5 backdrop-blur-xl">
+      <aside className="hidden md:flex w-64 flex-col bg-[#050f20]/90 border-r border-white/5 backdrop-blur-xl">
         <div className="p-6 flex items-center gap-3">
           <div className="p-2 bg-emerald-500/10 rounded-lg">
             <Compass className="text-emerald-400 w-6 h-6" />

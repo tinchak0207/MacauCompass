@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import LandingPage from './components/LandingPage';
 import ConsoleLayout from './components/ConsoleLayout';
 import Dashboard from './components/Dashboard';
-import BusinessSimulator from './components/BusinessSimulator';
-import PolicyAdvisor from './components/PolicyAdvisor';
+import CommercialRadar from './components/CommercialRadar';
+import Boardroom from './components/Boardroom';
+import BusinessPlanGenerator from './components/BusinessPlanGenerator';
 import GlassCard from './components/GlassCard';
 import IndustryChart from './components/charts/IndustryChart';
 import TrademarkChart from './components/charts/TrademarkChart';
@@ -47,10 +48,12 @@ const App: React.FC = () => {
     switch (view) {
       case NavView.DASHBOARD:
         return <Dashboard />;
-      case NavView.BUSINESS_SIMULATOR:
-        return <BusinessSimulator />;
-      case NavView.AI_ADVISOR:
-        return <PolicyAdvisor />;
+      case NavView.COMMERCIAL_RADAR:
+        return <CommercialRadar />;
+      case NavView.BOARDROOM:
+        return <Boardroom />;
+      case NavView.BUSINESS_PLAN:
+        return <BusinessPlanGenerator />;
       case NavView.INDUSTRY:
         return (
           <div className="space-y-4">

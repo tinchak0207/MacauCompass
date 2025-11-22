@@ -2,9 +2,10 @@ export enum NavView {
   LANDING = 'LANDING',
   DASHBOARD = 'DASHBOARD',
   INDUSTRY = 'INDUSTRY',
-  BUSINESS_SIMULATOR = 'BUSINESS_SIMULATOR',
+  COMMERCIAL_RADAR = 'COMMERCIAL_RADAR',
   TRADEMARKS = 'TRADEMARKS',
-  AI_ADVISOR = 'AI_ADVISOR'
+  BOARDROOM = 'BOARDROOM',
+  BUSINESS_PLAN = 'BUSINESS_PLAN'
 }
 
 export interface IndustryData {
@@ -84,4 +85,60 @@ export interface RiskAssessment {
   };
   recommendations: string[];
   monthlySurvival: number; // months of runway
+}
+
+// Commercial Radar Types
+export interface CompetitorPlace {
+  name: string;
+  rating?: number;
+  userRatingsTotal?: number;
+  vicinity?: string;
+  types?: string[];
+  mapsUri?: string;
+}
+
+export interface RadarParams {
+  district: string;
+  businessType: string;
+}
+
+export interface RadarMetrics {
+  competitorCount: number;
+  avgRating?: number;
+  densityScore?: number;
+}
+
+export interface RadarAnalysis {
+  competitors: CompetitorPlace[];
+  saturationLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  insights: string;
+  recommendations: string[];
+  metrics: RadarMetrics;
+  updatedAt: string;
+}
+
+// Business Plan Types
+export interface BusinessPlanParams {
+  district: string;
+  businessType: string;
+  budget: number;
+}
+
+export interface BusinessPlan {
+  title: string;
+  summary: string;
+  swot: {
+    strengths: string[];
+    weaknesses: string[];
+    opportunities: string[];
+    threats: string[];
+  };
+  financialProjection: {
+    initialInvestment: number;
+    monthlyRevenue: number;
+    monthlyExpenses: number;
+    breakEvenMonths: number;
+  };
+  compliance: string[];
+  markdown: string;
 }
