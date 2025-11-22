@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend, ComposedChart } from 'recharts';
 import { IndustryData } from '../../types';
 
-// Translated data for display
-const baseData: IndustryData[] = [
+// Default data for fallback
+const defaultData: IndustryData[] = [
   { name: '批發及零售業', newCompanies: 120, growth: 5.2 },
   { name: '建築業', newCompanies: 45, growth: -1.2 },
   { name: '商業服務', newCompanies: 98, growth: 12.5 },
@@ -12,6 +12,10 @@ const baseData: IndustryData[] = [
   { name: '酒店及餐飲', newCompanies: 88, growth: 8.7 },
   { name: '不動產業務', newCompanies: 40, growth: 1.5 },
 ];
+
+interface IndustryChartProps {
+  data?: IndustryData[];
+}
 
 interface ChartDataWithPrediction extends IndustryData {
   predicted?: number;
@@ -39,8 +43,8 @@ const generateTrendPrediction = (data: IndustryData[]): ChartDataWithPrediction[
   });
 };
 
-const IndustryChart: React.FC = () => {
-  const chartData = useMemo(() => generateTrendPrediction(baseData), []);
+const IndustryChart: React.FC<IndustryChartProps> = ({ data = defaultData }) => {
+  const chartData = useMemo(() => generateTrendPrediction(data), [data]);
 
   return (
     <div className="space-y-6">
