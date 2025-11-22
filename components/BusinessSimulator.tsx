@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GlassCard from './GlassCard';
 import MacauMap from './MacauMap';
+import TacticalAI from './TacticalAI';
 import { 
   SimulationParams, 
   SimulationResult, 
@@ -157,8 +158,8 @@ const BusinessSimulator: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <h2 className="text-3xl font-serif font-bold text-white mb-2">生意模擬器</h2>
-        <p className="text-gray-400">模擬您的創業成本，AI 即時評估風險</p>
+        <h2 className="text-3xl font-serif font-bold text-white mb-2">生意模擬器 v2.0</h2>
+        <p className="text-gray-400">模擬您的創業成本，AI 即時評估風險與機遇</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -266,7 +267,7 @@ const BusinessSimulator: React.FC = () => {
                 <Calculator className="text-emerald-400 w-5 h-5" />
                 <h3 className="text-lg font-semibold text-white">成本計算</h3>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-3 border-b border-white/5">
                   <span className="text-gray-400">月租金</span>
@@ -274,28 +275,28 @@ const BusinessSimulator: React.FC = () => {
                     MOP {result.monthlyRent.toLocaleString()}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center py-3 border-b border-white/5">
                   <span className="text-gray-400">月薪資</span>
                   <span className="text-xl font-semibold text-white">
                     MOP {result.monthlyPayroll.toLocaleString()}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center py-3 border-b border-white/5">
                   <span className="text-gray-400">月固定成本</span>
                   <span className="text-xl font-semibold text-indigo-400">
                     MOP {result.monthlyFixedCosts.toLocaleString()}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center py-3 border-b border-white/5">
                   <span className="text-gray-400">總初期投資</span>
                   <span className="text-xl font-semibold text-amber-400">
                     MOP {result.totalInitialInvestment.toLocaleString()}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center py-3">
                   <span className="text-gray-400">燒錢速度</span>
                   <div className="flex items-center space-x-2">
@@ -308,6 +309,13 @@ const BusinessSimulator: React.FC = () => {
               </div>
             </GlassCard>
           )}
+
+          {/* Tactical AI Analysis */}
+          <TacticalAI
+            params={params}
+            result={result}
+            selectedDistrict={selectedDistrict}
+          />
 
           {/* AI Risk Assessment */}
           <GlassCard className="p-6">
