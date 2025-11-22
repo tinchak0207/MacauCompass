@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, type Content } from "@google/genai";
 
 const SYSTEM_INSTRUCTION = `
 You are the "Macau Business Compass AI" (澳門商業指南針 AI), an expert consultant on the Macau Special Administrative Region's business environment.
@@ -19,30 +19,76 @@ Output: Format using Markdown. Use bolding for key terms.
 Do not provide financial advice that implies guaranteed returns. Always suggest consulting with a professional accountant (註冊核數師) or lawyer for binding legal actions.
 `;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+let ai: GoogleGenAI | null = null;
+
+const getAIClient = (): GoogleGenAI => {
+  if (!ai) {
+    const apiKey = (typeof process !== 'undefined' && process.env?.API_KEY) || 
+                   (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) ||
+                   '';
+    
+    // Check if apiKey is actually set and not the string "undefined"
+    if (!apiKey || apiKey === 'undefined' || apiKey === '') {
+      throw new Error('GEMINI_API_KEY environment variable is not set. Please ensure the API key is properly configured.');
+    }
+    
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
+};
 
 export const streamBusinessAdvice = async (
   message: string,
   history: { role: 'user' | 'model'; text: string }[]
 ) => {
   try {
-    const chat = ai.chats.create({
-      model: 'gemini-2.5-flash',
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7,
-      },
-      history: history.map(h => ({
-        role: h.role,
+    const aiClient = getAIClient();
+
+    // Convert history to Content format - ensure only valid message turns
+    const contents: Content[] = history
+      .filter(h => h.text && h.text.trim())
+      .map(h => ({
+        role: h.role as 'user' | 'model',
         parts: [{ text: h.text }]
-      }))
-    });
+      }));
 
-    const resultStream = await chat.sendMessageStream({
-      message: message
-    });
+    // Validate history starts with user message (API requirement)
+    if (contents.length > 0 && contents[0].role !== 'user') {
+      // Remove leading model messages
+      while (contents.length > 0 && contents[0].role === 'model') {
+        contents.shift();
+      }
+    }
 
-    return resultStream;
+    // Add current message to contents
+    const allContents: Content[] = [
+      ...contents,
+      {
+        role: 'user',
+        parts: [{ text: message }]
+      }
+    ];
+
+    try {
+      // Use the models API directly for better error handling
+      const resultStream = await aiClient.models.generateContentStream({
+        model: 'gemini-2.0-flash-001',
+        contents: allContents,
+        systemInstruction: SYSTEM_INSTRUCTION,
+        generationConfig: {
+          temperature: 0.7,
+        }
+      });
+
+      return resultStream;
+    } catch (streamError: any) {
+      // Log detailed error information for debugging
+      if (streamError?.status === 403) {
+        console.error("API Authentication Error (403):", streamError);
+        throw new Error(`API Authentication failed: ${streamError?.message || 'Invalid API key or insufficient permissions'}`);
+      }
+      throw streamError;
+    }
 
   } catch (error) {
     console.error("Gemini API Error:", error);

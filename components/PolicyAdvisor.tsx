@@ -78,28 +78,44 @@ const PolicyAdvisor: React.FC = () => {
         : userMessage.text;
 
       // Call Gemini API
-      const stream = await streamBusinessAdvice(finalPrompt, apiHistory);
+      let stream;
+      try {
+        stream = await streamBusinessAdvice(finalPrompt, apiHistory);
+      } catch (streamInitError) {
+        console.error("Error initiating stream:", streamInitError);
+        throw streamInitError;
+      }
       
       let fullText = '';
       
-      for await (const chunk of stream) {
-        const chunkText = chunk.text;
-        if (chunkText) {
-            fullText += chunkText;
-            
-            setMessages(prev => {
-              const newArr = [...prev];
-              const lastIndex = newArr.length - 1;
-              if (lastIndex >= 0) {
-                const lastMsg = { ...newArr[lastIndex] };
-                if (lastMsg.role === 'model' && lastMsg.isStreaming) {
-                    lastMsg.text = fullText;
-                    newArr[lastIndex] = lastMsg;
-                }
-              }
-              return newArr;
-            });
+      try {
+        for await (const chunk of stream) {
+          try {
+            const chunkText = chunk?.text;
+            if (chunkText) {
+                fullText += chunkText;
+                
+                setMessages(prev => {
+                  const newArr = [...prev];
+                  const lastIndex = newArr.length - 1;
+                  if (lastIndex >= 0) {
+                    const lastMsg = { ...newArr[lastIndex] };
+                    if (lastMsg.role === 'model' && lastMsg.isStreaming) {
+                        lastMsg.text = fullText;
+                        newArr[lastIndex] = lastMsg;
+                    }
+                  }
+                  return newArr;
+                });
+            }
+          } catch (chunkError) {
+            console.error("Error processing chunk:", chunkError);
+            // Continue processing remaining chunks
+          }
         }
+      } catch (iterationError) {
+        console.error("Error iterating stream:", iterationError);
+        throw iterationError;
       }
 
       // Finalize message state
