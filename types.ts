@@ -43,6 +43,23 @@ export interface CompanyApiResponse {
   unit?: string;
 }
 
+export interface MedianEarningsData {
+  value: number; // in MOP
+  periodString: string;
+  growth?: number;
+}
+
+export interface InterestRateData {
+  primeLendingRate: number; // percentage
+  periodString: string;
+  growth?: number;
+}
+
+export interface InflationData {
+  rate: number; // percentage
+  periodString: string;
+}
+
 export interface MarketStats {
   latestMonthStr: string;
   newCompaniesCurrent: number;
@@ -50,6 +67,9 @@ export interface MarketStats {
   newCompaniesGrowth: number;
   trademarkHistory: TrademarkData[];
   industryData: IndustryData[];
+  medianEarnings?: MedianEarningsData;
+  interestRate?: InterestRateData;
+  inflation?: InflationData;
   lastUpdated: Date;
 }
 
