@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import BusinessSimulator from './components/BusinessSimulator';
 import PolicyAdvisor from './components/PolicyAdvisor';
 import SiteInspector from './components/SiteInspector';
+import ComprehensiveMarketDashboard from './components/ComprehensiveMarketDashboard';
 import GlassCard from './components/GlassCard';
 import IndustryChart from './components/charts/IndustryChart';
 import TrademarkChart from './components/charts/TrademarkChart';
@@ -54,6 +55,8 @@ const App: React.FC = () => {
         return <PolicyAdvisor />;
       case NavView.SITE_INSPECTOR:
         return <SiteInspector />;
+      case NavView.MARKET_INSIGHTS:
+        return <ComprehensiveMarketDashboard />;
       case NavView.INDUSTRY:
         return (
           <div className="space-y-4">
