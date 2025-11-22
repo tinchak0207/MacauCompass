@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Newspaper, TrendingUp } from 'lucide-react';
+import GlassCard from './GlassCard';
 
 interface NewsItem {
   id: string;

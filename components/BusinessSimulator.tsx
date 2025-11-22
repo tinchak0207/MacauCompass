@@ -102,7 +102,7 @@ const BusinessSimulator: React.FC = () => {
       const stream = await streamBusinessAdvice(prompt, []);
       let responseText = '';
       
-      for await (const chunk of stream.stream) {
+      for await (const chunk of (stream as any).stream) {
         const text = chunk.text();
         responseText += text;
       }
