@@ -49,6 +49,7 @@ export interface MarketStats {
   newCompaniesPrevious: number;
   newCompaniesGrowth: number;
   trademarkHistory: TrademarkData[];
+  industryData: IndustryData[];
   lastUpdated: Date;
 }
 

@@ -1,4 +1,4 @@
-import { CompanyApiResponse, TrademarkData, MarketStats } from '../types';
+import { CompanyApiResponse, TrademarkData, MarketStats, IndustryData } from '../types';
 
 const COMPANY_API_URL = 'https://dsec.apigateway.data.gov.mo/public/KeyIndicator/NewlyIncorporatedCompanies';
 const COMPANY_APP_CODE = '09d43a591fba407fb862412970667de4';
@@ -22,6 +22,16 @@ const getMockTrademarkData = (): TrademarkData[] => [
   { month: '6月', applications: 450 },
   { month: '7月', applications: 430 },
   { month: '8月', applications: 480 },
+];
+
+const getMockIndustryData = (): IndustryData[] => [
+  { name: '批發及零售業', newCompanies: 120, growth: 5.2 },
+  { name: '建築業', newCompanies: 45, growth: -1.2 },
+  { name: '商業服務', newCompanies: 98, growth: 12.5 },
+  { name: '運輸及倉儲', newCompanies: 32, growth: 2.1 },
+  { name: '資訊科技', newCompanies: 55, growth: 18.4 },
+  { name: '酒店及餐飲', newCompanies: 88, growth: 8.7 },
+  { name: '不動產業務', newCompanies: 40, growth: 1.5 },
 ];
 
 export const fetchMarketData = async (): Promise<MarketStats> => {
@@ -79,6 +89,7 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
     newCompaniesPrevious: prevCompany.value,
     newCompaniesGrowth: growth,
     trademarkHistory: trademarkHistory.length > 0 ? trademarkHistory.slice(-12) : getMockTrademarkData(),
+    industryData: getMockIndustryData(),
     lastUpdated: new Date()
   };
 };

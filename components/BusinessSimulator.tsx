@@ -85,7 +85,7 @@ const BusinessSimulator: React.FC = () => {
 - 總初期投資: MOP ${result.totalInitialInvestment.toLocaleString()}
 - 燒錢速度: MOP ${result.burnRate.toLocaleString()}/月
 
-請以JSON格式回應，包含以下結構：
+請以JSON格式回應，包含以下結構（注意：所有字段值都必須是有效的JSON，不要在JSON中使用任何註釋或斜杠）：
 {
   "overall": "LOW|MEDIUM|HIGH|CRITICAL",
   "factors": {
@@ -94,7 +94,7 @@ const BusinessSimulator: React.FC = () => {
     "cashFlow": { "level": "健康|緊張|危險", "description": "現金流分析" }
   },
   "recommendations": ["建議1", "建議2", "建議3"],
-  "monthlySurvival": 數字 (假設沒有收入的情況下，資金可維持月份)
+  "monthlySurvival": 3.5
 }
 
 請基於澳門當前的市場環境、租金水平、人力成本和經濟情況進行實際評估。`;
@@ -119,12 +119,14 @@ const BusinessSimulator: React.FC = () => {
           jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '');
           jsonStr = jsonStr.replace(/^[^{]*({[\s\S]*})[^}]*$/, '$1'); // Extract just the JSON object
           
+          // Remove all comments (// and /* */ style) - careful to handle trailing text
+          jsonStr = jsonStr.replace(/\s*\/\/[^\n}"]*([\n}]|$)/g, '$1');  // Remove // comments with trailing text
+          jsonStr = jsonStr.replace(/\/\*[\s\S]*?\*\//g, '');  // Remove /* */ block comments
+          
           // Try to fix common JSON issues
           jsonStr = jsonStr
             .replace(/,\s*}/g, '}')  // Remove trailing commas before }
             .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
-            .replace(/\n/g, '')      // Remove newlines
-            .replace(/\r/g, '')      // Remove carriage returns
             .trim();
           
           // Validate JSON structure before parsing

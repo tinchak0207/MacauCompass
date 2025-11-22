@@ -136,11 +136,11 @@ const Dashboard: React.FC = () => {
       {/* Charts Row - Taller for more data density */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[500px]">
         <GlassCard className="p-5 flex flex-col">
-          <h3 className="text-lg font-semibold text-white mb-4 border-b border-white/5 pb-2">行業分佈熱力圖</h3>
-          <div className="flex-1 min-h-0">
-            <IndustryChart />
-          </div>
-        </GlassCard>
+            <h3 className="text-lg font-semibold text-white mb-4 border-b border-white/5 pb-2">行業分佈熱力圖</h3>
+            <div className="flex-1 min-h-0">
+              <IndustryChart data={stats?.industryData} />
+            </div>
+          </GlassCard>
 
         <GlassCard className="p-5 flex flex-col">
           <h3 className="text-lg font-semibold text-white mb-4 border-b border-white/5 pb-2">商標註冊申請趨勢</h3>

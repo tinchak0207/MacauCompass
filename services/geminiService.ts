@@ -188,12 +188,14 @@ export const analyzeShopfrontImage = async (
       jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '');
       jsonStr = jsonStr.replace(/^[^{]*({[\s\S]*})[^}]*$/, '$1'); // Extract just the JSON object
       
+      // Remove all comments (// and /* */ style) - careful to handle trailing text
+      jsonStr = jsonStr.replace(/\s*\/\/[^\n}"]*([\n}]|$)/g, '$1');  // Remove // comments with trailing text
+      jsonStr = jsonStr.replace(/\/\*[\s\S]*?\*\//g, '');  // Remove /* */ block comments
+      
       // Try to fix common JSON issues
       jsonStr = jsonStr
         .replace(/,\s*}/g, '}')  // Remove trailing commas before }
         .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
-        .replace(/\n/g, '')      // Remove newlines
-        .replace(/\r/g, '')      // Remove carriage returns
         .trim();
       
       // Validate JSON structure before parsing
