@@ -179,13 +179,52 @@ export const analyzeShopfrontImage = async (
       }
     }
 
-    const jsonMatch = fullResponse.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
+    // More robust JSON extraction and parsing
+    const extractAndParseJSON = (text: string) => {
+      // Try to find JSON in the response
+      let jsonStr = text;
+      
+      // Remove common prefixes/suffixes that might interfere with JSON parsing
+      jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+      jsonStr = jsonStr.replace(/^[^{]*({[\s\S]*})[^}]*$/, '$1'); // Extract just the JSON object
+      
+      // Try to fix common JSON issues
+      jsonStr = jsonStr
+        .replace(/,\s*}/g, '}')  // Remove trailing commas before }
+        .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
+        .replace(/\n/g, '')      // Remove newlines
+        .replace(/\r/g, '')      // Remove carriage returns
+        .trim();
+      
+      // Validate JSON structure before parsing
+      if (!jsonStr.startsWith('{') || !jsonStr.endsWith('}')) {
+        throw new Error('Response does not contain valid JSON object');
+      }
+      
+      return JSON.parse(jsonStr);
+    };
+
+    try {
+      const result: SiteAuditResult = extractAndParseJSON(fullResponse);
+      
+      // Validate the parsed result has required structure
+      if (result && 
+          typeof result.visibilityScore === 'number' &&
+          result.visibilityAnalysis &&
+          result.industryFit &&
+          result.conditionAssessment &&
+          result.overallRating &&
+          result.recommendations) {
+        return result;
+      } else {
+        throw new Error('Parsed JSON does not have required SiteAuditResult structure');
+      }
+    } catch (parseError) {
+      console.error('Failed to parse Site Inspector AI response:', parseError);
+      console.error('Raw response was:', fullResponse);
+      console.error('Error details:', parseError.message);
       throw new Error('Failed to parse JSON response from Site Inspector AI');
     }
-
-    const result: SiteAuditResult = JSON.parse(jsonMatch[0]);
-    return result;
   } catch (error) {
     console.error("Site Inspector Analysis Error:", error);
     throw error;
