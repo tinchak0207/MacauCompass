@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   TrendingUp, 
-  Coins, 
+  Calculator, 
   FileText, 
   Bot, 
   Menu,
@@ -28,9 +28,9 @@ const ConsoleLayout: React.FC<ConsoleLayoutProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: NavView.DASHBOARD, label: '儀表板', icon: LayoutDashboard },
+    { id: NavView.DASHBOARD, label: '商業戰情室', icon: LayoutDashboard },
     { id: NavView.INDUSTRY, label: '行業熱力圖', icon: TrendingUp },
-    { id: NavView.COSTS, label: '成本分析', icon: Coins },
+    { id: NavView.BUSINESS_SIMULATOR, label: '生意模擬器', icon: Calculator },
     { id: NavView.TRADEMARKS, label: '商標趨勢', icon: FileText },
     { id: NavView.AI_ADVISOR, label: 'AI 政策顧問', icon: Bot },
   ];
