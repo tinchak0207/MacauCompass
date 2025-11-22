@@ -3,7 +3,8 @@ import GlassCard from './GlassCard';
 import SocialPulseTicker from './SocialPulseTicker';
 import IndustryChart from './charts/IndustryChart';
 import TrademarkChart from './charts/TrademarkChart';
-import { TrendingUp, Users, Building2, ArrowUpRight, ArrowDownRight, RefreshCcw, Loader2, Activity } from 'lucide-react';
+import DataQualityBadge from './DataQualityBadge';
+import { TrendingUp, Users, Building2, ArrowUpRight, ArrowDownRight, RefreshCcw, Loader2, Activity, Info } from 'lucide-react';
 import { fetchMarketData } from '../services/dataService';
 import { MarketStats } from '../types';
 
@@ -52,6 +53,20 @@ const Dashboard: React.FC = () => {
     );
   };
 
+  const findDataQuality = (id: string) => stats?.dataQuality?.find(flag => flag.id === id);
+  const renderDataBadge = (id: string, compact = true) => {
+    const flag = findDataQuality(id);
+    if (!flag) return null;
+    const titleParts = [flag.description, flag.sourceHint].filter(Boolean).join('\n');
+    return (
+      <DataQualityBadge
+        status={flag.status}
+        title={titleParts}
+        compact={compact}
+      />
+    );
+  };
+
   if (loading && !stats) {
     return (
       <div className="h-full flex flex-col items-center justify-center space-y-4">
@@ -92,7 +107,10 @@ const Dashboard: React.FC = () => {
             <div className="p-2 bg-emerald-500/10 rounded-lg">
               <Building2 className="text-emerald-400 w-5 h-5" />
             </div>
-            {stats && renderGrowth(stats.newCompaniesGrowth)}
+            <div className="flex flex-col items-end gap-1">
+              {stats && renderGrowth(stats.newCompaniesGrowth)}
+              {renderDataBadge('new_companies')}
+            </div>
           </div>
           <div className="text-3xl font-bold text-white mb-1 font-serif">
             {stats ? formatNumber(stats.newCompaniesCurrent) : '---'}
@@ -101,6 +119,7 @@ const Dashboard: React.FC = () => {
         </GlassCard>
 
         {/* Real Data: Earnings */}
+        {/* Static Data: Earnings - PLACEHOLDER */}
         <GlassCard className="p-4" enableTilt hoverEffect>
           <div className="flex justify-between items-start mb-3">
             <div className="p-2 bg-indigo-500/10 rounded-lg">
@@ -110,11 +129,18 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="text-3xl font-bold text-white mb-1 font-serif">
             {stats?.medianEarnings ? (stats.medianEarnings.value / 1000).toFixed(1) + 'K' : '---'}
+            <div className="flex flex-col items-end gap-1">
+              <span className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-500/10 px-2 py-1 rounded">
+                +2.1% <ArrowUpRight className="w-3 h-3 ml-1" />
+              </span>
+              {renderDataBadge('median_income')}
+            </div>
           </div>
           <div className="text-xs text-gray-400">月收入中位數 (MOP)</div>
         </GlassCard>
 
         {/* Real Data: Interest Rate */}
+        {/* Static Data: Interest Rate - PLACEHOLDER */}
         <GlassCard className="p-4" enableTilt hoverEffect>
           <div className="flex justify-between items-start mb-3">
              <div className="p-2 bg-amber-500/10 rounded-lg">
@@ -124,11 +150,18 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="text-3xl font-bold text-white mb-1 font-serif">
             {stats?.interestRate ? stats.interestRate.primeLendingRate.toFixed(2) + '%' : '---'}
+             <div className="flex flex-col items-end gap-1">
+              <span className="flex items-center text-red-400 text-xs font-medium bg-red-500/10 px-2 py-1 rounded">
+                -0.8% <ArrowDownRight className="w-3 h-3 ml-1" />
+              </span>
+              {renderDataBadge('interest_rate')}
+            </div>
           </div>
           <div className="text-xs text-gray-400">中小企最優惠利率</div>
         </GlassCard>
 
         {/* Real Data: Inflation / Price Index */}
+        {/* New: Business Activity Index - PLACEHOLDER */}
         <GlassCard className="p-4" enableTilt hoverEffect>
           <div className="flex justify-between items-start mb-3">
              <div className="p-2 bg-purple-500/10 rounded-lg">
@@ -145,6 +178,12 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="text-3xl font-bold text-white mb-1 font-serif">
             {stats?.inflation ? stats.inflation.rate.toFixed(2) + '%' : '---'}
+             <div className="flex flex-col items-end gap-1">
+              <span className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-500/10 px-2 py-1 rounded">
+                +5.2% <ArrowUpRight className="w-3 h-3 ml-1" />
+              </span>
+              {renderDataBadge('business_activity_index')}
+            </div>
           </div>
           <div className="text-xs text-gray-400">消費物價指數 (通脹率)</div>
         </GlassCard>
@@ -153,19 +192,52 @@ const Dashboard: React.FC = () => {
       {/* Charts Row - Taller for more data density */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[500px]">
         <GlassCard className="p-5 flex flex-col">
-            <h3 className="text-lg font-semibold text-white mb-4 border-b border-white/5 pb-2">行業分佈熱力圖</h3>
+            <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+              <h3 className="text-lg font-semibold text-white">行業分佈熱力圖</h3>
+              {renderDataBadge('industry_data', false)}
+            </div>
             <div className="flex-1 min-h-0">
               <IndustryChart data={stats?.industryData} />
             </div>
           </GlassCard>
 
         <GlassCard className="p-5 flex flex-col">
-          <h3 className="text-lg font-semibold text-white mb-4 border-b border-white/5 pb-2">商標註冊申請趨勢</h3>
+          <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+            <h3 className="text-lg font-semibold text-white">商標註冊申請趨勢</h3>
+            {renderDataBadge('trademarks', false)}
+          </div>
           <div className="flex-1 min-h-0">
             <TrademarkChart data={stats?.trademarkHistory} />
           </div>
         </GlassCard>
       </div>
+
+      {/* Data Quality Panel */}
+      {stats?.dataQuality && (
+        <GlassCard className="p-4 mt-4">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-white mb-2">數據來源透明度報告</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {stats.dataQuality.map(flag => (
+                  <div 
+                    key={flag.id}
+                    className="flex items-center gap-2 bg-white/5 rounded px-3 py-2 border border-white/5"
+                    title={[flag.description, flag.sourceHint].filter(Boolean).join('\n')}
+                  >
+                    <DataQualityBadge status={flag.status} compact={true} />
+                    <span className="text-xs text-gray-300">{flag.label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-gray-500 mt-2">
+                💡 真實數據來自澳門政府開放平台 (data.gov.mo) | 占位數據將陸續替換為實時 API
+              </p>
+            </div>
+          </div>
+        </GlassCard>
+      )}
     </div>
   );
 };

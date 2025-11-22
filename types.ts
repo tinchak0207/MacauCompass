@@ -9,6 +9,16 @@ export enum NavView {
   MARKET_INSIGHTS = 'MARKET_INSIGHTS'
 }
 
+export type DataStatus = 'REALTIME' | 'FALLBACK' | 'PLACEHOLDER';
+
+export interface DataQualityFlag {
+  id: string;
+  label: string;
+  status: DataStatus;
+  description: string;
+  sourceHint?: string;
+}
+
 export interface IndustryData {
   name: string;
   newCompanies: number;
@@ -248,6 +258,7 @@ export interface MarketStats {
   interestRate?: InterestRateData;
   inflation?: InflationData;
   lastUpdated: Date;
+  dataQuality: DataQualityFlag[];
 }
 
 export interface SimulationParams {
