@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import GlassCard from './GlassCard';
-import NewsTicker from './NewsTicker';
+import SocialPulseTicker from './SocialPulseTicker';
 import IndustryChart from './charts/IndustryChart';
 import TrademarkChart from './charts/TrademarkChart';
 import { TrendingUp, Users, Building2, ArrowUpRight, ArrowDownRight, RefreshCcw, Loader2, Activity } from 'lucide-react';
@@ -53,12 +53,12 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* News Ticker */}
-      <NewsTicker />
+      {/* Social Pulse Ticker */}
+      <SocialPulseTicker />
 
       <div className="flex flex-col md:flex-row justify-between items-end mb-2">
         <div>
-          <h2 className="text-3xl font-serif font-bold text-white mb-1">商業戰情室</h2>
+          <h2 className="text-3xl font-serif font-bold text-white mb-1">商業戰情室 v2.0</h2>
           <p className="text-gray-400 text-sm">
             最新統計數據週期： {stats?.latestMonthStr || '當前週期'}
           </p>
