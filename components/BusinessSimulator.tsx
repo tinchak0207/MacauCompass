@@ -110,13 +110,33 @@ const BusinessSimulator: React.FC = () => {
       }
 
       try {
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        // Try to extract valid JSON more robustly
+        let jsonText = responseText;
+        
+        // Remove common prefixes/suffixes that can cause parsing issues
+        jsonText = jsonText.replace(/^```json\s*/, '').replace(/```\s*$/, '');
+        jsonText = jsonText.replace(/^[^{]*({[\s\S]*})[^}]*$/, '$1');
+        
+        // Try to find JSON object
+        const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
-          const assessment = JSON.parse(jsonMatch[0]);
+          const jsonString = jsonMatch[0];
+          
+          // Additional validation and cleanup
+          const cleanedJson = jsonString
+            .replace(/,\s*}/g, '}')  // Remove trailing commas
+            .replace(/,\s*]/g, ']')  // Remove trailing commas in arrays
+            .replace(/:\s*"/g, ':"') // Fix spacing around colons
+            .replace(/"\s*,/g, '",'); // Fix spacing around commas
+          
+          const assessment = JSON.parse(cleanedJson);
           setRiskAssessment(assessment);
+        } else {
+          throw new Error('No JSON found in response');
         }
       } catch (parseError) {
         console.error('Failed to parse AI response:', parseError);
+        console.error('Response text:', responseText);
         // Fallback assessment
         setRiskAssessment({
           overall: 'MEDIUM',
