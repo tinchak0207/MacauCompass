@@ -44,7 +44,22 @@ const generateTrendPrediction = (data: IndustryData[]): ChartDataWithPrediction[
 };
 
 const IndustryChart: React.FC<IndustryChartProps> = ({ data = defaultData }) => {
-  const chartData = useMemo(() => generateTrendPrediction(data), [data]);
+  console.log('📊 [IndustryChart] 組件渲染');
+  console.log('📥 [IndustryChart] 接收到的 data prop:', data);
+  console.log('📏 [IndustryChart] data 長度:', data?.length || 0);
+  
+  if (data === defaultData) {
+    console.warn('⚠️ [IndustryChart] 使用默認數據');
+  } else {
+    console.log('✅ [IndustryChart] 使用傳入的數據');
+  }
+  
+  const chartData = useMemo(() => {
+    console.log('🔧 [IndustryChart] 生成預測數據...');
+    const predictions = generateTrendPrediction(data);
+    console.log('📊 [IndustryChart] 預測數據樣本:', predictions[0]);
+    return predictions;
+  }, [data]);
 
   return (
     <div className="space-y-6">
