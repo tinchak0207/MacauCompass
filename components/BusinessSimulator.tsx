@@ -110,13 +110,47 @@ const BusinessSimulator: React.FC = () => {
       }
 
       try {
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const assessment = JSON.parse(jsonMatch[0]);
+        // More robust JSON extraction and parsing
+        const extractAndParseJSON = (text: string) => {
+          // Try to find JSON in the response
+          let jsonStr = text;
+          
+          // Remove common prefixes/suffixes that might interfere with JSON parsing
+          jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+          jsonStr = jsonStr.replace(/^[^{]*({[\s\S]*})[^}]*$/, '$1'); // Extract just the JSON object
+          
+          // Try to fix common JSON issues
+          jsonStr = jsonStr
+            .replace(/,\s*}/g, '}')  // Remove trailing commas before }
+            .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
+            .replace(/\n/g, '')      // Remove newlines
+            .replace(/\r/g, '')      // Remove carriage returns
+            .trim();
+          
+          // Validate JSON structure before parsing
+          if (!jsonStr.startsWith('{') || !jsonStr.endsWith('}')) {
+            throw new Error('Response does not contain valid JSON object');
+          }
+          
+          return JSON.parse(jsonStr);
+        };
+        
+        const assessment = extractAndParseJSON(responseText);
+        
+        // Validate the parsed assessment has required structure
+        if (assessment && 
+            assessment.overall && 
+            assessment.factors && 
+            assessment.recommendations && 
+            typeof assessment.monthlySurvival === 'number') {
           setRiskAssessment(assessment);
+        } else {
+          throw new Error('Parsed JSON does not have required structure');
         }
       } catch (parseError) {
         console.error('Failed to parse AI response:', parseError);
+        console.error('Raw response was:', responseText);
+        console.error('Error details:', parseError.message);
         // Fallback assessment
         setRiskAssessment({
           overall: 'MEDIUM',
