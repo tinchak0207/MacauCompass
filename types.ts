@@ -4,7 +4,8 @@ export enum NavView {
   INDUSTRY = 'INDUSTRY',
   BUSINESS_SIMULATOR = 'BUSINESS_SIMULATOR',
   TRADEMARKS = 'TRADEMARKS',
-  AI_ADVISOR = 'AI_ADVISOR'
+  AI_ADVISOR = 'AI_ADVISOR',
+  SITE_INSPECTOR = 'SITE_INSPECTOR'
 }
 
 export interface IndustryData {
@@ -84,4 +85,21 @@ export interface RiskAssessment {
   };
   recommendations: string[];
   monthlySurvival: number; // months of runway
+}
+
+export interface SiteAuditResult {
+  visibilityScore: number; // 0-100
+  visibilityAnalysis: string;
+  industryFit: {
+    suitable: string[];
+    unsuitable: string[];
+    recommendation: string;
+  };
+  conditionAssessment: {
+    issues: string[];
+    severity: 'LOW' | 'MEDIUM' | 'HIGH';
+    riskFactors: string[];
+  };
+  overallRating: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+  recommendations: string[];
 }

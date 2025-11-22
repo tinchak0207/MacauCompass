@@ -8,7 +8,8 @@ import {
   Menu,
   X,
   LogOut,
-  Compass
+  Compass,
+  Eye
 } from 'lucide-react';
 import { NavView } from '../types';
 
@@ -32,6 +33,7 @@ const ConsoleLayout: React.FC<ConsoleLayoutProps> = ({
     { id: NavView.INDUSTRY, label: '行業熱力圖', icon: TrendingUp },
     { id: NavView.BUSINESS_SIMULATOR, label: '生意模擬器', icon: Calculator },
     { id: NavView.TRADEMARKS, label: '商標趨勢', icon: FileText },
+    { id: NavView.SITE_INSPECTOR, label: '現場審計官', icon: Eye },
     { id: NavView.AI_ADVISOR, label: 'AI 政策顧問', icon: Bot },
   ];
 

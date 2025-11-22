@@ -4,6 +4,7 @@ import ConsoleLayout from './components/ConsoleLayout';
 import Dashboard from './components/Dashboard';
 import BusinessSimulator from './components/BusinessSimulator';
 import PolicyAdvisor from './components/PolicyAdvisor';
+import SiteInspector from './components/SiteInspector';
 import GlassCard from './components/GlassCard';
 import IndustryChart from './components/charts/IndustryChart';
 import TrademarkChart from './components/charts/TrademarkChart';
@@ -51,11 +52,13 @@ const App: React.FC = () => {
         return <BusinessSimulator />;
       case NavView.AI_ADVISOR:
         return <PolicyAdvisor />;
+      case NavView.SITE_INSPECTOR:
+        return <SiteInspector />;
       case NavView.INDUSTRY:
         return (
           <div className="space-y-4">
              <h2 className="text-2xl font-serif font-bold text-white">行業深度分析</h2>
-             <GlassCard className="p-8 h-[600px] flex flex-col">
+             <GlassCard className="p-8 flex flex-col">
                <IndustryChart />
              </GlassCard>
           </div>

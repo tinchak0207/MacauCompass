@@ -1,5 +1,5 @@
 {
-  "name": "Macau Compass",
-  "description": "A pure frontend data visualization and AI consultation platform for entrepreneurs in Macau. Features industry insights, cost analysis, and an AI-powered business policy advisor.",
-  "requestFramePermissions": []
+  "name": "Macau Compass v3.0 - Omniscient Eye",
+  "description": "A pure frontend data visualization and AI consultation platform for entrepreneurs in Macau. Features industry insights, cost analysis, AI-powered business policy advisor, Site Inspector (visual auditing with Gemini Vision), and Trend Oracle (predictive analytics).",
+  "requestFramePermissions": ["camera"]
 }
