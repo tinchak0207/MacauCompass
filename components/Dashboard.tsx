@@ -17,16 +17,26 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const loadData = async () => {
+    console.log('🎯 [Dashboard] 開始加載市場數據...');
     setLoading(true);
     try {
       const data = await fetchMarketData();
+      console.log('✅ [Dashboard] 成功接收到市場數據:', data);
+      console.log('📊 [Dashboard] 商標數據點數:', data.trademarkHistory?.length || 0);
+      console.log('📊 [Dashboard] 新公司當前值:', data.newCompaniesCurrent);
+      console.log('📊 [Dashboard] 行業數據點數:', data.industryData?.length || 0);
+      
       setStats(data);
       setError(false);
+      
+      console.log('✅ [Dashboard] State 更新完成');
     } catch (e) {
-      console.error(e);
+      console.error('❌ [Dashboard] 加載數據失敗:', e);
+      console.error('📝 [Dashboard] 錯誤堆疊:', (e as Error).stack);
       setError(true);
     } finally {
       setLoading(false);
+      console.log('🏁 [Dashboard] 加載流程結束');
     }
   };
 

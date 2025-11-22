@@ -12,7 +12,21 @@ const defaultData: TrademarkData[] = [
 ];
 
 const TrademarkChart: React.FC<TrademarkChartProps> = ({ data = defaultData }) => {
+  console.log('📊 [TrademarkChart] 組件渲染');
+  console.log('📥 [TrademarkChart] 接收到的 data prop:', data);
+  console.log('📏 [TrademarkChart] data 長度:', data?.length || 0);
+  
   const displayData = data && data.length > 0 ? data : defaultData;
+  
+  console.log('📊 [TrademarkChart] 最終顯示數據長度:', displayData.length);
+  console.log('📈 [TrademarkChart] 顯示數據前3筆:', displayData.slice(0, 3));
+  console.log('📈 [TrademarkChart] 顯示數據後3筆:', displayData.slice(-3));
+  
+  if (displayData === defaultData) {
+    console.warn('⚠️ [TrademarkChart] 使用默認數據 (可能數據獲取失敗)');
+  } else {
+    console.log('✅ [TrademarkChart] 使用真實數據');
+  }
 
   return (
     <div className="h-[300px] w-full">
