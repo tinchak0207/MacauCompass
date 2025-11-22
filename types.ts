@@ -8,6 +8,16 @@ export enum NavView {
   SITE_INSPECTOR = 'SITE_INSPECTOR'
 }
 
+export type DataStatus = 'REALTIME' | 'FALLBACK' | 'PLACEHOLDER';
+
+export interface DataQualityFlag {
+  id: string;
+  label: string;
+  status: DataStatus;
+  description: string;
+  sourceHint?: string;
+}
+
 export interface IndustryData {
   name: string;
   newCompanies: number;
@@ -51,6 +61,7 @@ export interface MarketStats {
   trademarkHistory: TrademarkData[];
   industryData: IndustryData[];
   lastUpdated: Date;
+  dataQuality: DataQualityFlag[];
 }
 
 export interface SimulationParams {

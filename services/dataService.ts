@@ -1,4 +1,4 @@
-import { CompanyApiResponse, TrademarkData, MarketStats, IndustryData } from '../types';
+import { CompanyApiResponse, TrademarkData, MarketStats, IndustryData, DataQualityFlag, DataStatus } from '../types';
 
 const COMPANY_API_URL = 'https://dsec.apigateway.data.gov.mo/public/KeyIndicator/NewlyIncorporatedCompanies';
 const COMPANY_APP_CODE = '09d43a591fba407fb862412970667de4';
@@ -37,6 +37,9 @@ const getMockIndustryData = (): IndustryData[] => [
 export const fetchMarketData = async (): Promise<MarketStats> => {
   let companyData: CompanyApiResponse;
   let trademarkHistory: TrademarkData[] = [];
+  let companyDataStatus: DataStatus = 'FALLBACK';
+  let trademarkDataStatus: DataStatus = 'FALLBACK';
+  const industryDataStatus: DataStatus = 'PLACEHOLDER';
 
   console.log('🔍 [DataService] ========== 開始獲取澳門政府開放平台數據 ==========');
   console.log('⏰ [DataService] 請求時間:', new Date().toLocaleString('zh-TW'));
@@ -81,6 +84,7 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
       
       if (companyData.values && companyData.values.length > 0) {
         console.log('📊 [Company API] 最新數據點:', companyData.values[0]);
+        companyDataStatus = 'REALTIME';
       }
     } else {
       const errorText = await companyResponse.text();
@@ -140,6 +144,12 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
         console.log('📈 [Trademark API] 最早數據點:', trademarkHistory[0]);
         console.log('📈 [Trademark API] 最新數據點:', trademarkHistory[trademarkHistory.length - 1]);
       }
+
+      if (trademarkHistory.length >= 3) {
+        trademarkDataStatus = 'REALTIME';
+      } else {
+        console.warn('⚠️ [Trademark API] 數據點少於3筆，將視為備援數據');
+      }
     } else {
       const errorText = await trademarkResponse.text();
       console.warn('⚠️ [Trademark API] 返回非成功狀態碼, 使用備用數據');
@@ -173,9 +183,62 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
   console.log('📊 [DataService] 前月值:', prevCompany.value);
   console.log('📈 [DataService] 增長率:', growth.toFixed(2) + '%');
 
-  const finalTrademarkData = trademarkHistory.length > 0 ? trademarkHistory.slice(-12) : getMockTrademarkData();
+  const hasValidTrademarkHistory = trademarkHistory.length >= 3;
+  const finalTrademarkData = hasValidTrademarkHistory ? trademarkHistory.slice(-12) : getMockTrademarkData();
+
+  if (!hasValidTrademarkHistory) {
+    console.warn('⚠️ [DataService] 商標數據不足，已切換至備援樣本');
+    trademarkDataStatus = 'FALLBACK';
+  }
+
   console.log('🏷️  [DataService] 最終商標數據數量:', finalTrademarkData.length);
   console.log('📊 [DataService] 最終商標數據 (最後3筆):', finalTrademarkData.slice(-3));
+
+  // Data Quality Tracking
+  const dataQuality: DataQualityFlag[] = [
+    {
+      id: 'new_companies',
+      label: '新成立公司',
+      status: companyDataStatus,
+      description: '來自澳門統計暨普查局 (DSEC)',
+      sourceHint: 'https://dsec.apigateway.data.gov.mo'
+    },
+    {
+      id: 'trademarks',
+      label: '商標註冊申請',
+      status: trademarkDataStatus,
+      description: '來自澳門經濟及科技發展局 (DSEDT)',
+      sourceHint: 'https://api.data.gov.mo/document/download'
+    },
+    {
+      id: 'industry_data',
+      label: '行業分佈',
+      status: industryDataStatus,
+      description: '需從 DSEC 行業統計 API 獲取',
+      sourceHint: '建議查找 data.gov.mo "按行業統計的企業及機構" 數據集'
+    },
+    {
+      id: 'median_income',
+      label: '月收入中位數',
+      status: 'PLACEHOLDER',
+      description: '需從 DSEC 就業調查 API 獲取',
+      sourceHint: '建議查找 data.gov.mo "工資及薪金統計" 數據集'
+    },
+    {
+      id: 'interest_rate',
+      label: '中小企最優惠利率',
+      status: 'PLACEHOLDER',
+      description: '需從澳門金融管理局 (AMCM) API 獲取',
+      sourceHint: '建議查找 data.gov.mo "銀行利率" 或 "物業按揭貸款" 數據集'
+    },
+    {
+      id: 'business_activity_index',
+      label: '商業活動指數',
+      status: 'PLACEHOLDER',
+      description: '需從 DSEC 經濟活動指數 API 獲取',
+      sourceHint: '建議查找 data.gov.mo "經濟活動指數" 或 "PMI" 數據集'
+    }
+  ];
 
   const finalStats = {
     latestMonthStr: formatPeriod(currentCompany.periodString),
@@ -184,7 +247,8 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
     newCompaniesGrowth: growth,
     trademarkHistory: finalTrademarkData,
     industryData: getMockIndustryData(),
-    lastUpdated: new Date()
+    lastUpdated: new Date(),
+    dataQuality
   };
 
   console.log('\n✅ [DataService] ========== 數據獲取完成 ==========');
@@ -192,6 +256,12 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
     ...finalStats,
     trademarkHistory: `${finalStats.trademarkHistory.length} 個數據點`,
     industryData: `${finalStats.industryData.length} 個行業`,
+    dataQuality: `${finalStats.dataQuality.length} 個數據源`,
+  });
+  console.log('📊 [DataService] 數據質量報告:');
+  dataQuality.forEach(dq => {
+    const statusIcon = dq.status === 'REALTIME' ? '✅' : dq.status === 'FALLBACK' ? '⚠️' : '❌';
+    console.log(`  ${statusIcon} [${dq.status}] ${dq.label}: ${dq.description}`);
   });
   console.log('⏰ [DataService] 完成時間:', new Date().toLocaleString('zh-TW'));
   console.log('═══════════════════════════════════════════════════\n');
