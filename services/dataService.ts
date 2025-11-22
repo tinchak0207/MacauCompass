@@ -59,9 +59,24 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
     console.log('📋 [Company API] 響應標頭:', Object.fromEntries(companyResponse.headers.entries()));
 
     if (companyResponse.ok) {
-      companyData = await companyResponse.json();
+      const rawData = await companyResponse.json();
       console.log('✅ [Company API] 成功獲取數據!');
-      console.log('📦 [Company API] 原始響應數據:', JSON.stringify(companyData, null, 2));
+      
+      // Handle nested structure from API - sometimes values are under .value property
+      if (rawData.value && Array.isArray(rawData.value.values)) {
+        companyData = {
+          values: rawData.value.values,
+          title: rawData.value.title,
+          unit: rawData.value.unit
+        };
+      } else if (Array.isArray(rawData.values)) {
+        companyData = rawData;
+      } else {
+        console.warn('⚠️ [Company API] 響應結構異常，無法識別values數據');
+        companyData = { values: [] };
+      }
+      
+      console.log('📦 [Company API] 原始響應數據:', JSON.stringify(rawData, null, 2).substring(0, 500));
       console.log('📈 [Company API] 數據點數量:', companyData.values?.length || 0);
       
       if (companyData.values && companyData.values.length > 0) {
@@ -87,17 +102,35 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
   console.log('🌐 [Trademark API] URL:', TRADEMARK_CSV_URL);
   
   try {
-    const trademarkResponse = await fetch(TRADEMARK_CSV_URL);
-    
+     const trademarkResponse = await fetch(TRADEMARK_CSV_URL);
+
     console.log('📡 [Trademark API] 響應狀態碼:', trademarkResponse.status, trademarkResponse.statusText);
     console.log('📋 [Trademark API] 響應標頭:', Object.fromEntries(trademarkResponse.headers.entries()));
-    
+
     if (trademarkResponse.ok) {
-      const csvText = await trademarkResponse.text();
-      console.log('✅ [Trademark API] 成功獲取 CSV 數據!');
-      console.log('📄 [Trademark API] CSV 文件大小:', csvText.length, '字符');
-      console.log('📝 [Trademark API] CSV 前 500 字符:', csvText.substring(0, 500));
-      
+      const responseText = await trademarkResponse.text();
+      console.log('✅ [Trademark API] 成功獲取數據!');
+      console.log('📄 [Trademark API] 數據大小:', responseText.length, '字符');
+      console.log('📝 [Trademark API] 前 500 字符:', responseText.substring(0, 500));
+
+      // Check if response is JSON (metadata) instead of CSV
+      let csvText = responseText;
+      if (responseText.trim().startsWith('{')) {
+        console.warn('⚠️ [Trademark API] 收到 JSON 格式而非 CSV，嘗試解析元數據...');
+        try {
+          const jsonData = JSON.parse(responseText);
+          // Try to extract CSV content if it's in a specific field
+          if (jsonData.data) {
+            csvText = jsonData.data;
+            console.log('✅ [Trademark API] 從 JSON 中提取 CSV 數據');
+          } else {
+            console.warn('⚠️ [Trademark API] 無法從 JSON 元數據中提取 CSV');
+          }
+        } catch (e) {
+          console.warn('⚠️ [Trademark API] JSON 解析失敗');
+        }
+      }
+
       trademarkHistory = parseTrademarkCSV(csvText);
       
       console.log('✨ [Trademark API] CSV 解析完成!');
@@ -170,18 +203,23 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
 const parseTrademarkCSV = (csv: string): TrademarkData[] => {
   console.log('🔧 [CSV Parser] 開始解析商標 CSV 數據...');
   
+  if (!csv || typeof csv !== 'string') {
+    console.warn('⚠️ [CSV Parser] CSV 數據無效或不是字符串');
+    return [];
+  }
+  
   const lines = csv.trim().split('\n');
   console.log('📄 [CSV Parser] 總行數:', lines.length);
   
   if (lines.length > 0) {
-    console.log('📋 [CSV Parser] 標頭行:', lines[0]);
+    console.log('📋 [CSV Parser] 標頭行:', lines[0].substring(0, 100));
   }
   
   const data: TrademarkData[] = [];
   let skippedLines = 0;
   let parsedLines = 0;
   
-  // Skip header (index 0)
+  // Skip header (index 0) and process data rows
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) {
@@ -189,21 +227,25 @@ const parseTrademarkCSV = (csv: string): TrademarkData[] => {
       continue;
     }
     
-    const parts = line.split(',').map(p => p.replace(/"/g, ''));
+    // Split by comma and clean up
+    const parts = line.split(',').map(p => p.trim().replace(/^"/, '').replace(/"$/, ''));
     
     if (i <= 3) {
-      console.log(`📝 [CSV Parser] 第 ${i} 行原始數據:`, line);
+      console.log(`📝 [CSV Parser] 第 ${i} 行原始數據:`, line.substring(0, 100));
       console.log(`📝 [CSV Parser] 第 ${i} 行解析結果:`, parts);
     }
     
+    // Expect format: year, month, quantity (with optional additional columns)
     if (parts.length >= 3) {
-      const year = parts[0];
-      const month = parts[1];
-      const qty = parseInt(parts[2], 10);
+      const year = parts[0].trim();
+      const month = parts[1].trim();
+      const qty = parseInt(parts[2].trim(), 10);
       
-      if (!isNaN(qty)) {
+      // Validate that we have numeric year and valid month
+      if (!isNaN(qty) && year && month && !isNaN(parseInt(year, 10)) && !isNaN(parseInt(month, 10))) {
         const shortYear = year.length === 4 ? year.substring(2) : year;
-        const monthName = `${parseInt(month)}月`;
+        const monthNum = parseInt(month, 10);
+        const monthName = `${monthNum}月`;
         
         const dataPoint = {
           month: `${monthName} ${shortYear}`,
@@ -217,11 +259,13 @@ const parseTrademarkCSV = (csv: string): TrademarkData[] => {
           console.log(`✅ [CSV Parser] 成功解析數據點 ${parsedLines}:`, dataPoint);
         }
       } else {
-        console.warn(`⚠️ [CSV Parser] 第 ${i} 行數量解析失敗:`, parts[2]);
+        console.warn(`⚠️ [CSV Parser] 第 ${i} 行數據驗證失敗 - Year: ${year}, Month: ${month}, Qty: ${qty}`);
         skippedLines++;
       }
     } else {
-      console.warn(`⚠️ [CSV Parser] 第 ${i} 行欄位不足 (需要>=3, 實際=${parts.length}):`, parts);
+      if (i <= 3) {
+        console.warn(`⚠️ [CSV Parser] 第 ${i} 行欄位不足 (需要>=3, 實際=${parts.length}):`, parts.join('|'));
+      }
       skippedLines++;
     }
   }
