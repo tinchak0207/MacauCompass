@@ -360,67 +360,66 @@ export const fetchMarketData = async (): Promise<MarketStats> => {
   console.log('🏷️  [DataService] 最終商標數據數量:', finalTrademarkData.length);
   console.log('📊 [DataService] 最終商標數據 (最後3筆):', finalTrademarkData.slice(-3));
 
-  const finalStats: MarketStats = {
-  // Data Quality Tracking
-  const dataQuality: DataQualityFlag[] = [
-    {
-      id: 'new_companies',
-      label: '新成立公司',
-      status: companyDataStatus,
-      description: '來自澳門統計暨普查局 (DSEC)',
-      sourceHint: 'https://dsec.apigateway.data.gov.mo'
-    },
-    {
-      id: 'trademarks',
-      label: '商標註冊申請',
-      status: trademarkDataStatus,
-      description: '來自澳門經濟及科技發展局 (DSEDT)',
-      sourceHint: 'https://api.data.gov.mo/document/download'
-    },
-    {
-      id: 'industry_data',
-      label: '行業分佈',
-      status: industryDataStatus,
-      description: '需從 DSEC 行業統計 API 獲取',
-      sourceHint: '建議查找 data.gov.mo "按行業統計的企業及機構" 數據集'
-    },
-    {
-      id: 'median_income',
-      label: '月收入中位數',
-      status: 'PLACEHOLDER',
-      description: '需從 DSEC 就業調查 API 獲取',
-      sourceHint: '建議查找 data.gov.mo "工資及薪金統計" 數據集'
-    },
-    {
-      id: 'interest_rate',
-      label: '中小企最優惠利率',
-      status: 'PLACEHOLDER',
-      description: '需從澳門金融管理局 (AMCM) API 獲取',
-      sourceHint: '建議查找 data.gov.mo "銀行利率" 或 "物業按揭貸款" 數據集'
-    },
-    {
-      id: 'business_activity_index',
-      label: '商業活動指數',
-      status: 'PLACEHOLDER',
-      description: '需從 DSEC 經濟活動指數 API 獲取',
-      sourceHint: '建議查找 data.gov.mo "經濟活動指數" 或 "PMI" 數據集'
-    }
-  ];
+  // 1. 先定义 dataQuality 变量
+const dataQuality: DataQualityFlag[] = [
+  {
+    id: 'new_companies',
+    label: '新成立公司',
+    status: companyDataStatus,
+    description: '來自澳門統計暨普查局 (DSEC)',
+    sourceHint: 'https://dsec.apigateway.data.gov.mo'
+  },
+  {
+    id: 'trademarks',
+    label: '商標註冊申請',
+    status: trademarkDataStatus,
+    description: '來自澳門經濟及科技發展局 (DSEDT)',
+    sourceHint: 'https://api.data.gov.mo/document/download'
+  },
+  {
+    id: 'industry_data',
+    label: '行業分佈',
+    status: industryDataStatus,
+    description: '需從 DSEC 行業統計 API 獲取',
+    sourceHint: '建議查找 data.gov.mo "按行業統計的企業及機構" 數據集'
+  },
+  {
+    id: 'median_income',
+    label: '月收入中位數',
+    status: 'PLACEHOLDER',
+    description: '需從 DSEC 就業調查 API 獲取',
+    sourceHint: '建議查找 data.gov.mo "工資及薪金統計" 數據集'
+  },
+  {
+    id: 'interest_rate',
+    label: '中小企最優惠利率',
+    status: 'PLACEHOLDER',
+    description: '需從澳門金融管理局 (AMCM) API 獲取',
+    sourceHint: '建議查找 data.gov.mo "銀行利率" 或 "物業按揭貸款" 數據集'
+  },
+  {
+    id: 'business_activity_index',
+    label: '商業活動指數',
+    status: 'PLACEHOLDER',
+    description: '需從 DSEC 經濟活動指數 API 獲取',
+    sourceHint: '建議查找 data.gov.mo "經濟活動指數" 或 "PMI" 數據集'
+  }
+];
 
-  const finalStats = {
-    latestMonthStr: formatPeriod(currentCompany.periodString),
-    newCompaniesCurrent: currentCompany.value,
-    newCompaniesPrevious: prevCompany.value,
-    newCompaniesGrowth: growth,
-    trademarkHistory: finalTrademarkData,
-    industryData: getMockIndustryData(),
-    medianEarnings,
-    interestRate,
-    inflation,
-    lastUpdated: new Date()
-    lastUpdated: new Date(),
-    dataQuality
-  };
+// 2. 然后定义 finalStats，并引用上面的 dataQuality
+const finalStats: MarketStats = {
+  latestMonthStr: formatPeriod(currentCompany.periodString),
+  newCompaniesCurrent: currentCompany.value,
+  newCompaniesPrevious: prevCompany.value,
+  newCompaniesGrowth: growth,
+  trademarkHistory: finalTrademarkData,
+  industryData: getMockIndustryData(),
+  medianEarnings,
+  interestRate,
+  inflation,
+  lastUpdated: new Date(),
+  dataQuality // 这里直接引用上面的变量
+};
 
   console.log('\n✅ [DataService] ========== 數據獲取完成 ==========');
   console.log('📦 [DataService] 最終統計數據:', {
