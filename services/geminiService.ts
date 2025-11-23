@@ -39,13 +39,14 @@ let ai: GoogleGenAI | null = null;
 
 const getAIClient = (): GoogleGenAI => {
   if (!ai) {
-    const apiKey = (typeof process !== 'undefined' && process.env?.API_KEY) || 
-                   (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) ||
+    // Vite uses import.meta.env for environment variables
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 
+                   import.meta.env.VITE_API_KEY ||
                    '';
     
     // Check if apiKey is actually set and not the string "undefined"
     if (!apiKey || apiKey === 'undefined' || apiKey === '') {
-      throw new Error('GEMINI_API_KEY environment variable is not set. Please ensure the API key is properly configured.');
+      throw new Error('VITE_GEMINI_API_KEY environment variable is not set. Please set it in Vercel Environment Variables.');
     }
     
     ai = new GoogleGenAI({ apiKey });
