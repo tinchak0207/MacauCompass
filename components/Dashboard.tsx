@@ -118,12 +118,17 @@ const Dashboard: React.FC = () => {
           <div className="text-xs text-gray-400">新成立公司 (月同比)</div>
         </GlassCard>
 
+        {/* Real Data: Earnings */}
         {/* Static Data: Earnings - PLACEHOLDER */}
         <GlassCard className="p-4" enableTilt hoverEffect>
           <div className="flex justify-between items-start mb-3">
             <div className="p-2 bg-indigo-500/10 rounded-lg">
               <Users className="text-indigo-400 w-5 h-5" />
             </div>
+            {stats?.medianEarnings && renderGrowth(stats.medianEarnings.growth ?? 0)}
+          </div>
+          <div className="text-3xl font-bold text-white mb-1 font-serif">
+            {stats?.medianEarnings ? (stats.medianEarnings.value / 1000).toFixed(1) + 'K' : '---'}
             <div className="flex flex-col items-end gap-1">
               <span className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-500/10 px-2 py-1 rounded">
                 +2.1% <ArrowUpRight className="w-3 h-3 ml-1" />
@@ -131,16 +136,20 @@ const Dashboard: React.FC = () => {
               {renderDataBadge('median_income')}
             </div>
           </div>
-          <div className="text-3xl font-bold text-white mb-1 font-serif">18.5K</div>
           <div className="text-xs text-gray-400">月收入中位數 (MOP)</div>
         </GlassCard>
 
+        {/* Real Data: Interest Rate */}
         {/* Static Data: Interest Rate - PLACEHOLDER */}
         <GlassCard className="p-4" enableTilt hoverEffect>
           <div className="flex justify-between items-start mb-3">
              <div className="p-2 bg-amber-500/10 rounded-lg">
               <TrendingUp className="text-amber-400 w-5 h-5" />
             </div>
+             {stats?.interestRate && renderGrowth(stats.interestRate.growth ?? 0)}
+          </div>
+          <div className="text-3xl font-bold text-white mb-1 font-serif">
+            {stats?.interestRate ? stats.interestRate.primeLendingRate.toFixed(2) + '%' : '---'}
              <div className="flex flex-col items-end gap-1">
               <span className="flex items-center text-red-400 text-xs font-medium bg-red-500/10 px-2 py-1 rounded">
                 -0.8% <ArrowDownRight className="w-3 h-3 ml-1" />
@@ -148,16 +157,27 @@ const Dashboard: React.FC = () => {
               {renderDataBadge('interest_rate')}
             </div>
           </div>
-          <div className="text-3xl font-bold text-white mb-1 font-serif">3.25%</div>
           <div className="text-xs text-gray-400">中小企最優惠利率</div>
         </GlassCard>
 
+        {/* Real Data: Inflation / Price Index */}
         {/* New: Business Activity Index - PLACEHOLDER */}
         <GlassCard className="p-4" enableTilt hoverEffect>
           <div className="flex justify-between items-start mb-3">
              <div className="p-2 bg-purple-500/10 rounded-lg">
               <Activity className="text-purple-400 w-5 h-5" />
             </div>
+             {stats?.inflation && (stats.inflation.rate > 0 
+              ? <span className="flex items-center text-orange-400 text-xs font-medium bg-orange-500/10 px-2 py-1 rounded">
+                  +{stats.inflation.rate.toFixed(2)}% <ArrowUpRight className="w-3 h-3 ml-1" />
+                </span>
+              : <span className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-500/10 px-2 py-1 rounded">
+                  {stats.inflation.rate.toFixed(2)}% <ArrowDownRight className="w-3 h-3 ml-1" />
+                </span>
+             )}
+          </div>
+          <div className="text-3xl font-bold text-white mb-1 font-serif">
+            {stats?.inflation ? stats.inflation.rate.toFixed(2) + '%' : '---'}
              <div className="flex flex-col items-end gap-1">
               <span className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-500/10 px-2 py-1 rounded">
                 +5.2% <ArrowUpRight className="w-3 h-3 ml-1" />
@@ -165,8 +185,7 @@ const Dashboard: React.FC = () => {
               {renderDataBadge('business_activity_index')}
             </div>
           </div>
-          <div className="text-3xl font-bold text-white mb-1 font-serif">78.3</div>
-          <div className="text-xs text-gray-400">商業活動指數</div>
+          <div className="text-xs text-gray-400">消費物價指數 (通脹率)</div>
         </GlassCard>
       </div>
 
