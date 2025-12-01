@@ -27,6 +27,8 @@
     "@tarojs/cli": "^3.6.0",
     "@tarojs/webpack5": "^3.6.0",
     "@tarojs/mini-runner": "^3.6.0",
+    "@tarojs/plugin-platform-weapp": "^3.6.0",
+    "@tarojs/plugin-platform-h5": "^3.6.0",
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"

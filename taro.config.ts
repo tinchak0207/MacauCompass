@@ -11,7 +11,10 @@ const config: TaroConfig = {
   },
   sourceRoot: 'src',
   outputRoot: 'dist',
-  plugins: [],
+  plugins: [
+    '@tarojs/plugin-platform-weapp',
+    '@tarojs/plugin-platform-h5'
+  ],
   defineConstants: {},
   copy: {
     patterns: [],
