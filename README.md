@@ -1,15 +1,12 @@
+# Macau Compass
 
-
-# Run and deploy your AI Studio app
-
-This contains everything you need to run your app locally.
+A pure frontend data visualization and AI consultation platform for entrepreneurs in Macau. Features industry insights, cost analysis, AI-powered business policy advisor, and visual site inspection with Gemini Vision.
 
 View your app in AI Studio: https://ai.studio/apps/drive/1X5--mdP9ok5sSyF9AExF9axgtCRGS3-Q
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
+**Prerequisites:** Node.js 18+
 
 1. Install dependencies:
    ```bash
