@@ -1,0 +1,29 @@
+{
+  "miniprogramRoot": "dist/",
+  "projectname": "macau-compass",
+  "description": "澳門商業指南針 WeChat Mini Program",
+  "appid": "YOUR_APPID_HERE",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "nodeModules": true,
+    "bigPackageSizeSupport": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.19.4",
+  "babelSetting": {
+    "ignore": [],
+    "disablePlugins": [],
+    "presets": [],
+    "plugins": []
+  },
+  "permission": {},
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "auto",
+    "tabSize": 2
+  }
+}
